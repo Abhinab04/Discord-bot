@@ -79,9 +79,9 @@ client.on('ready',async()=>{
         .setTitle(title)
         .setURL(ans)
         .setDescription(text)
-        client.channels.cache.get("1237466068281458742").send("@everyone"+"  "+ item);
-       client.channels.cache.get("1237466068281458742").send({ embeds: [coloring] });
+        client.channels.cache.get("channel id").send("@everyone"+"  "+ item);
+       client.channels.cache.get("channel id").send({ embeds: [coloring] });
     }
   }
 })
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN); //discord bot token that store in .env file
