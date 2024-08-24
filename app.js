@@ -70,7 +70,7 @@ var items=Array("here's today's leetcode question:-","alright, we have a new dai
 var item=items[Math.floor(Math.random()*items.length)];
 
 client.on('ready',async()=>{
-  if(date.getHours()===21){
+  if(date.getHours()===18){
     const {ans,title}=await webscrapping();
     const text=await fetch({ans});
     if(ans){
