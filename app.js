@@ -92,9 +92,9 @@ client.on('ready', async () => {
         .setTitle(title)
         .setURL(ans)
         .setDescription(text)
-      client.channels.cache.get("1237466068281458742").send("@everyone" + "  " + item);
-      client.channels.cache.get("1237466068281458742").send({ embeds: [coloring] });
+      client.channels.cache.get("channelid").send("@everyone" + "  " + item);
+      client.channels.cache.get("channelid").send({ embeds: [coloring] });
     }
   }
 })
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN); //your discord bot token should be in .env file
