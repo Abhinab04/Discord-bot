@@ -1,7 +1,7 @@
-FROM ghcr.io/puppeteer/puppeteer:22.9.0 
+FROM ghcr.io/puppeteer/puppeteer:22.9.0
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+    PUPPETEER_EXECUATBLE_PATH=/usr/bin/google-chrome-stable
 
 # Create app directory
 WORKDIR /app
