@@ -22,7 +22,7 @@ const webscrapping = async () => {
       "--no-sandbox",
       "--no-zygote",
     ],
-    executablePath: process.env.NODE_ENV === 'production' ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath()
+    executablePath :process.env.NODE_ENV==="production" ?  process.env.PUPPETEER_EXECUTABLE_PATH :puppeteer.executablePath()
   })
   const page = await browser.newPage();
   await page.setViewport({ width: 1000, height: 926 })
@@ -63,7 +63,7 @@ const fetch = async ({ ans, title }) => {
         "--no-sandbox",
         "--no-zygote",
       ],
-      executablePath: process.env.NODE_ENV === 'production' ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath()
+      executablePath :process.env.NODE_ENV==="production" ?  process.env.PUPPETEER_EXECUTABLE_PATH :puppeteer.executablePath()
     })
 
     const page = await browser.newPage()
@@ -83,7 +83,7 @@ var items = Array("here's today's leetcode question:-", "alright, we have a new 
 var item = items[Math.floor(Math.random() * items.length)];
 
 client.on('ready', async () => {
-  if (date.getHours() === 19) {
+  if (date.getHours() === 13) {
     const { ans, title } = await webscrapping();
     const text = await fetch({ ans });
     if (ans) {
@@ -92,8 +92,8 @@ client.on('ready', async () => {
         .setTitle(title)
         .setURL(ans)
         .setDescription(text)
-      client.channels.cache.get("channel id").send("@everyone" + "  " + item);
-      client.channels.cache.get("channel id").send({ embeds: [coloring] });
+      client.channels.cache.get("1237466068281458742").send("@everyone" + "  " + item);
+      client.channels.cache.get("1237466068281458742").send({ embeds: [coloring] });
     }
   }
 })
