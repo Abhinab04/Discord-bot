@@ -11,6 +11,8 @@
   "dependencies": {
     "discord.js": "^14.15.2",
     "dotenv": "^16.4.5",
+    "html-to-text": "^9.0.5",
+    "leetcode-query": "^1.2.3",
     "puppeteer": "^22.9.0"
   }
 }
