@@ -36,8 +36,14 @@ name()
 var items = Array("here's today's leetcode question:-", "alright, we have a new daily question let's see who can do this:-", "hey hey,you know what time it is?? it's leetcode daily question time let's see whether you have what it takes to solve it", "Its time for today's leetcode question:-", "Hey, haven't you solved today's leetcode question yet ?? Its the time!!!")
 var item = items[Math.floor(Math.random() * items.length)];
 
-client.on('ready', async () => {
-  if (date.getHours() === 19) {
+
+client.on('messageCreate', async (msg) => {
+   
+  if(msg.author.bot){
+    return
+  }
+   
+  if (msg.content==='/question') {
     const {des,link,questiontitle} = await name();
     if (link) {
       const coloring = new EmbedBuilder()
@@ -45,7 +51,7 @@ client.on('ready', async () => {
         .setTitle(questiontitle)
         .setURL(link)
         .setDescription(des)
-      client.channels.cache.get("1237466068281458742").send("@everyone" + "  " + item);
+      client.channels.cache.get("1237466068281458742").send( "here is today's daily problem :-");
       client.channels.cache.get("1237466068281458742").send({ embeds: [coloring] });
     }
   }
