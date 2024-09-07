@@ -51,8 +51,8 @@ client.on('messageCreate', async (msg) => {
         .setTitle(questiontitle)
         .setURL(link)
         .setDescription(des)
-      client.channels.cache.get("channel id").send( "here is today's daily problem :-");
-      client.channels.cache.get("channel id").send({ embeds: [coloring] });
+      client.channels.cache.get("1237466068281458742").send( "here is today's daily problem :-");
+      client.channels.cache.get("1237466068281458742").send({ embeds: [coloring] });
     }
   }
 })
