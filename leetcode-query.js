@@ -1,6 +1,10 @@
 require('dotenv').config();
 const {LeetCode} =require('leetcode-query')
+const express=require('express')
 const{convert, htmlToText}=require('html-to-text')
+
+const app=express();
+const port=3000;
 
 const { EmbedBuilder } = require('discord.js');
 
@@ -33,7 +37,7 @@ var items = Array("here's today's leetcode question:-", "alright, we have a new 
 var item = items[Math.floor(Math.random() * items.length)];
 
 client.on('ready', async () => {
-  if (date.getHours() === 18) {
+  if (date.getHours() === 19) {
     const {des,link,questiontitle} = await name();
     if (link) {
       const coloring = new EmbedBuilder()
@@ -47,3 +51,11 @@ client.on('ready', async () => {
   }
 })
 client.login(process.env.DISCORD_TOKEN);
+
+app.get('/',(req,res)=>{
+  res.send("<h1>leetbot deployment</h1>")
+})
+
+app.listen(port,()=>{
+  console.log("port is listening :3000")
+})
