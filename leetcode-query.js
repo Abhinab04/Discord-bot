@@ -75,7 +75,7 @@ async function dailyHints() {
   total_daily_hints = ""
   const recent_hin = await leetcode.daily();
   const recent_titleSlug = recent_hin.question.titleSlug
-  const daily_hints =await leetcode.problem(recent_titleSlug);
+  const daily_hints = await leetcode.problem(recent_titleSlug);
   const daily_hints_len = daily_hints.hints.length
   if (daily_hints_len === 0) {
     return { hints_not_found, daily_hints_len }
@@ -85,8 +85,7 @@ async function dailyHints() {
       dailydes = dailydes + `${i + 1}) ||${(htmlToText(daily_hints.hints[i]))} ||\n`
     }
     dailydesc = dailydesc + `${1}) ${(htmlToText(daily_hints.hints[0]))} \n`
-    total_daily_hints = total_daily_hints + dailydes + dailydesc
-    console.log(total_daily_hints)
+    total_daily_hints = total_daily_hints + dailydesc + dailydes
     return { total_daily_hints, daily_hints_len }
   }
 }
@@ -155,36 +154,14 @@ client.on('messageCreate', async (msg) => {
   }
 })
 
-client.on("interactionCreate", async (iinteraction) => {
-  var { total_daily_hints, daily_hints_len, hints_not_found } = await dailyHints();
-  if (iinteraction.customId === 'showdailyhints') {
-    if (daily_hints_len > 0) {
-
-      const embed = new EmbedBuilder()
-        .setColor('Yellow')
-        .setDescription(total_daily_hints)
-      interaction.reply({
-        content: "Hints :-",
-        embeds: [embed]
-      })
-    }
-    else {
-      const embed = new EmbedBuilder()
-        .setColor('Yellow')
-        .setDescription(hints_not_found)
-      iinteraction.reply({
-        content: "Hints :-",
-        embeds: [embed]
-      })
-    }
-  }
-})
 
 
 
 client.on("interactionCreate", async (interaction) => {
-  var { total_hints, hints_not_found, hint_len } = await hints(con);
+
+
   if (interaction.customId === 'show-hints') {
+    var { total_hints, hints_not_found, hint_len } = await hints(con);
     if (hint_len > 0) {
 
       const embed = new EmbedBuilder()
@@ -203,6 +180,32 @@ client.on("interactionCreate", async (interaction) => {
         content: "Hints :-",
         embeds: [embed]
       })
+    }
+  }
+
+
+  if (interaction.customId === 'showdailyhints') {
+    var { total_daily_hints, daily_hints_len, hints_not_found } = await dailyHints();
+    if (interaction.customId === 'showdailyhints') {
+      if (daily_hints_len > 0) {
+
+        const dailyss = new EmbedBuilder()
+          .setColor('Yellow')
+          .setDescription(total_daily_hints)
+        interaction.reply({
+          content: "Hints :-",
+          embeds: [dailyss]
+        })
+      }
+      else {
+        const dailyss = new EmbedBuilder()
+          .setColor('Yellow')
+          .setDescription(hints_not_found)
+        interaction.reply({
+          content: "Hints :-",
+          embeds: [dailyss]
+        })
+      }
     }
   }
 })
