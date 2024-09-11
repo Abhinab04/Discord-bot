@@ -1,5 +1,5 @@
 # LeetBot
-This Bot help the user to scrap the daily question from Leetcode and sends to your discord channel...
+This Bot help the user to scrap the daily question , search your desired question ,maintain leaderboard by solving daily problem
 
 # features
 * Daily problems
