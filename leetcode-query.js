@@ -2,6 +2,7 @@ require('dotenv').config();
 const { LeetCode } = require('leetcode-query')
 const express = require('express')
 const { htmlToText } = require('html-to-text')
+const mongoose = require('mongoose')
 
 const app = express();
 const port = 3000;
@@ -18,32 +19,52 @@ const client = new Client({
   ]
 })
 
+const User = require("./models/Users")
+
+//mongodb connection string
+const db = require('./config/key').MongoURI;
+
+//mongodb connection
+mongoose.connect(db, { useNewUrlParser: true })
+  .then(() => {
+    console.log("mongodb connect")
+  })
+  .catch(err => console.log(err))
+
 
 
 const leetcode = new LeetCode();
 var con = '';
-
-async function name() {
+let adddes = ""
+async function names() {
+  adddes = ""
   const user = await leetcode.daily();
   const questiontitle = user.question.title
   const description = user.question.content
   const link = "https://leetcode.com" + user.link
   const des = htmlToText(description, 130)
-  return { des, link, questiontitle }
+  const daily_titleSlug = user.question.titleSlug
+  const dailydifficulty = await leetcode.problem(daily_titleSlug);
+  const diff = dailydifficulty.difficulty
+  adddes = adddes + "Difficulty :-" + diff + "\n\n" + des
+  return { adddes, link, questiontitle }
 }
 
 let hints_des = "";
 let hints_desc = "";
 let total_hints = ""
 let hints_not_found = "No hints are provided"
+let total = ""
 async function question(con) {
+  total = ""
   const problem = await leetcode.problem(con)
   const search_link = "https://leetcode.com/problems/" + con
-
+  const difficulty = problem.difficulty
   const search_des = problem.content
   const search_d = htmlToText(search_des, 130)
   const search_title = problem.title
-  return { search_d, search_title, search_link }
+  total = total + "Difficulty :-" + difficulty + "\n\n" + search_d
+  return { search_d, search_title, search_link, total }
 }
 
 async function hints(con) {
@@ -90,8 +111,26 @@ async function dailyHints() {
   }
 }
 
+//function for adding user in databse
+async function adduser(username) {
 
+  try {
+    const user = await User.findOne({ name: username })
+    if (!user) {
+      const newUser = new User({ name: username })
+      await newUser.save()
+      return { usersaved: "username added succesfully" }
+    }
+    else {
+      return { userexist: "username already exist" }
+    }
+  }
+  catch (err) {
+    console.log(err)
+  }
+}
 
+let namess = "";
 
 client.on('messageCreate', async (msg) => {
 
@@ -100,13 +139,13 @@ client.on('messageCreate', async (msg) => {
   }
 
   if (msg.content === '/daily') {
-    const { des, link, questiontitle } = await name();
+    const { adddes, link, questiontitle } = await names();
     if (link) {
       const coloring = new EmbedBuilder()
         .setColor('Yellow')
         .setTitle(questiontitle)
         .setURL(link)
-        .setDescription(des)
+        .setDescription(adddes)
       const confirms = new ButtonBuilder()
         .setCustomId('showdailyhints')
         .setLabel('Hints')
@@ -130,14 +169,14 @@ client.on('messageCreate', async (msg) => {
     if (search === "search") {
       if (prob === con) {
 
-        const { search_d, search_title, search_link } = await question(con);
+        const { search_title, search_link, total } = await question(con);
         if (search_link) {
 
           const coloring = new EmbedBuilder()
             .setColor('Yellow')
             .setTitle(search_title)
             .setURL(search_link)
-            .setDescription(search_d)
+            .setDescription(total)
           const confirm = new ButtonBuilder()
             .setCustomId('show-hints')
             .setLabel('Hints')
@@ -149,6 +188,21 @@ client.on('messageCreate', async (msg) => {
           client.channels.cache.get("1237466068281458742").send({ embeds: [coloring] });
           client.channels.cache.get("1237466068281458742").send({ components: [row] });
         }
+      }
+    }
+  }
+
+  const adds = args[0];
+  namess = args[1];
+
+  if (adds === "/add") {
+    if (namess != undefined) {
+      const result = await adduser(namess)
+      if (result.userexist) {
+        msg.reply("User already exist")
+      }
+      if (result.usersaved) {
+        msg.reply("User saved")
       }
     }
   }
