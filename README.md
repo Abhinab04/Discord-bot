@@ -4,5 +4,6 @@ This Bot help the user to scrap the daily question , search your desired questio
 # features
 * Daily problems
 * Searched Problem with hints
+* Leaderboard
 
 # more features soon....
