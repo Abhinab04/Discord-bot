@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 const app = express();
 const port = 3000;
 
-const { EmbedBuilder, Collection, ButtonBuilder, ActionRowBuilder, ButtonStyle, Component } = require('discord.js');
+const { EmbedBuilder, Collection, ButtonBuilder, ActionRowBuilder, ButtonStyle, Component, Message } = require('discord.js');
 
 const { Client, GatewayIntentBits } = require('discord.js');
 
@@ -112,12 +112,12 @@ async function dailyHints() {
 }
 
 //function for adding user in databse
-async function adduser(username) {
+async function adduser(username, Idss) {
 
   try {
-    const user = await User.findOne({ name: username })
+    const user = await User.findOne({ name: username, Id: Idss })
     if (!user) {
-      const newUser = new User({ name: username })
+      const newUser = new User({ name: username, Id: Idss })
       await newUser.save()
       return { usersaved: "username added succesfully" }
     }
@@ -130,7 +130,44 @@ async function adduser(username) {
   }
 }
 
+let xp = "";
+
+
+async function submit(userid, con) {
+  const finduser = await User.find({ Id: userid })
+  const leetcodeusername = finduser[0].name;
+  const submission = await leetcode.recent_submissions(leetcodeusername);
+  const submissiondaily = await leetcode.daily();
+  const submissiondailyquestion = submissiondaily.question.title;
+  const obj = submission[0];
+  if (submissiondailyquestion !== Object.values(obj)[0] && Object.values(obj)[3] !== 'Accepted') {
+    console.log("question done")
+    xp += 10;
+    return { dailysuccesmsg: "congratulation...point rewarded" }
+  }
+
+  const submissionsearch = await leetcode.problem(con)
+  const submissionsearchtitle = submissionsearch.title
+  const submissionsearchdifficulty = submissionsearch.difficulty
+  if (Object.values(obj)[3] === 'Accepted' && submissionsearchdifficulty === 'Easy' && submissionsearchtitle === Object.values(obj)[0]) {
+    console.log("easy done")
+    xp += 1;
+    return { dailysearcheasysuccess: "congratulations....point rewarded" }
+  }
+  if (Object.values(obj)[3] === 'Accepted' && submissionsearchdifficulty === 'Medium' && submissionsearchtitle === Object.values(obj)[0]) {
+    console.log("medium done")
+    xp += 3;
+    return { dailysearchmediumsuccess: "congratulations....point rewarded" }
+  }
+  if (Object.values(obj)[3] === 'Accepted' && submissionsearchdifficulty === 'Hard' && submissionsearchtitle === Object.values(obj)[0]) {
+    console.log("hard done")
+    xp += 5;
+    return { dailysearchhardsuccess: "congratulations....point rewarded" }
+  }
+}
 let namess = "";
+
+
 
 client.on('messageCreate', async (msg) => {
 
@@ -194,10 +231,12 @@ client.on('messageCreate', async (msg) => {
 
   const adds = args[0];
   namess = args[1];
+  var idss = "";
 
-  if (adds === "/add") {
+  if (adds === '/adduser') {
     if (namess != undefined) {
-      const result = await adduser(namess)
+      idss = msg.author.id
+      const result = await adduser(namess, idss)
       if (result.userexist) {
         msg.reply("User already exist")
       }
@@ -205,6 +244,26 @@ client.on('messageCreate', async (msg) => {
         msg.reply("User saved")
       }
     }
+  }
+  
+  var userid = "";
+  if (msg.content === '/submit') {
+    userid = msg.author.id;
+    const userdetails = await submit(userid)
+  }
+
+
+
+  if (msg.content === "/leaderboard") {
+    const leaderboard = new EmbedBuilder()
+      .setAuthor("Leaderboard")
+      .setColor("0x51267")
+      .addFields({ name: 'Top 5', value: "abhinab", inline: true },
+        {
+          name: 'Pts', value: "xp", inline: true
+        })
+    client.channels.cache.get("1237466068281458742").send("Ranking Table");
+    client.channels.cache.get("1237466068281458742").send({ embeds: [leaderboard] });
   }
 })
 
