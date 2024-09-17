@@ -4,6 +4,10 @@ const UserSchema=new mongoose.Schema({
     name:{
         type:String,
         required:true
+    },
+    Id:{
+        type:String,
+        required:true,
     }
 })
 
