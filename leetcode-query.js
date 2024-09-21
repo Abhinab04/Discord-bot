@@ -137,34 +137,54 @@ async function submit(userid, con) {
   const finduser = await User.find({ Id: userid })
   const leetcodeusername = finduser[0].name;
   const submission = await leetcode.recent_submissions(leetcodeusername);
-  const submissiondaily = await leetcode.daily();
-  const submissiondailyquestion = submissiondaily.question.title;
   const obj = submission[0];
-  if (submissiondailyquestion !== Object.values(obj)[0] && Object.values(obj)[3] !== 'Accepted') {
-    console.log("question done")
-    xp += 10;
-    return { dailysuccesmsg: "congratulation...point rewarded" }
-  }
-
   const submissionsearch = await leetcode.problem(con)
   const submissionsearchtitle = submissionsearch.title
   const submissionsearchdifficulty = submissionsearch.difficulty
   if (Object.values(obj)[3] === 'Accepted' && submissionsearchdifficulty === 'Easy' && submissionsearchtitle === Object.values(obj)[0]) {
-    console.log("easy done")
     xp += 1;
+   
+    addpts(userid,xp);
+    console.log(xp)
     return { dailysearcheasysuccess: "congratulations....point rewarded" }
   }
   if (Object.values(obj)[3] === 'Accepted' && submissionsearchdifficulty === 'Medium' && submissionsearchtitle === Object.values(obj)[0]) {
     console.log("medium done")
     xp += 3;
+    addpts(userid,xp);
     return { dailysearchmediumsuccess: "congratulations....point rewarded" }
   }
   if (Object.values(obj)[3] === 'Accepted' && submissionsearchdifficulty === 'Hard' && submissionsearchtitle === Object.values(obj)[0]) {
     console.log("hard done")
     xp += 5;
+    addpts(userid,xp);
     return { dailysearchhardsuccess: "congratulations....point rewarded" }
   }
 }
+
+async function submitdaily(userid) {
+  const finduser = await User.find({ Id: userid })
+  const leetcodeusername = finduser[0].name;
+  const submission = await leetcode.recent_submissions(leetcodeusername);
+  const obj = submission[0];
+  const submissiondaily = await leetcode.daily();
+  const submissiondailyquestion = submissiondaily.question.title;
+  if (submissiondailyquestion === Object.values(obj)[0] && Object.values(obj)[3] === 'Accepted') {
+    console.log("question done")
+    xp += 10;
+    addpts(userid,xp);
+    return { dailysuccesmsg: "congratulation...point rewarded" }
+  }
+}
+
+async function addpts(userid, xp) {
+  const finduserid = await User.findOne({ Id: userid })
+  if (finduserid) {
+    finduserid.pts+=xp;
+    await finduserid.save();
+  }
+}
+
 let namess = "";
 
 
@@ -245,11 +265,35 @@ client.on('messageCreate', async (msg) => {
       }
     }
   }
-  
+
   var userid = "";
   if (msg.content === '/submit') {
     userid = msg.author.id;
-    const userdetails = await submit(userid)
+    const userdetails = await submitdaily(userid)
+    if (userdetails) {
+      msg.reply("congratulations ....daily Question done : 10xp rewarded ")
+    }
+  }
+
+  const prog = args[2];
+  con = prog
+  if (command === '/submit') {
+    if (search === 'search') {
+      if (prog === con) {
+        userid = msg.author.id;
+        console.log(userid)
+        const { dailysearcheasysuccess, dailysearchmediumsuccess, dailysearchhardsuccess } = await submit(userid, con);
+        if (dailysearcheasysuccess) {
+          msg.reply("congratulations....point rewarded: 1xp ")
+        }
+        if (dailysearchmediumsuccess) {
+          msg.reply("congratulations....point rewarded: 3xp ")
+        }
+        if (dailysearchhardsuccess) {
+          msg.reply("congratulations....point rewarded: 5xp ")
+        }
+      }
+    }
   }
 
 
