@@ -8,6 +8,9 @@ const UserSchema=new mongoose.Schema({
     Id:{
         type:String,
         required:true,
+    },
+    pts:{
+        type:String,
     }
 })
 

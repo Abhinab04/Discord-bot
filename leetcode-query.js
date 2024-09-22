@@ -143,21 +143,21 @@ async function submit(userid, con) {
   const submissionsearchdifficulty = submissionsearch.difficulty
   if (Object.values(obj)[3] === 'Accepted' && submissionsearchdifficulty === 'Easy' && submissionsearchtitle === Object.values(obj)[0]) {
     xp += 1;
-   
-    addpts(userid,xp);
+
+    addpts(userid, xp);
     console.log(xp)
     return { dailysearcheasysuccess: "congratulations....point rewarded" }
   }
   if (Object.values(obj)[3] === 'Accepted' && submissionsearchdifficulty === 'Medium' && submissionsearchtitle === Object.values(obj)[0]) {
     console.log("medium done")
     xp += 3;
-    addpts(userid,xp);
+    addpts(userid, xp);
     return { dailysearchmediumsuccess: "congratulations....point rewarded" }
   }
   if (Object.values(obj)[3] === 'Accepted' && submissionsearchdifficulty === 'Hard' && submissionsearchtitle === Object.values(obj)[0]) {
     console.log("hard done")
     xp += 5;
-    addpts(userid,xp);
+    addpts(userid, xp);
     return { dailysearchhardsuccess: "congratulations....point rewarded" }
   }
 }
@@ -172,7 +172,7 @@ async function submitdaily(userid) {
   if (submissiondailyquestion === Object.values(obj)[0] && Object.values(obj)[3] === 'Accepted') {
     console.log("question done")
     xp += 10;
-    addpts(userid,xp);
+    addpts(userid, xp);
     return { dailysuccesmsg: "congratulation...point rewarded" }
   }
 }
@@ -180,9 +180,41 @@ async function submitdaily(userid) {
 async function addpts(userid, xp) {
   const finduserid = await User.findOne({ Id: userid })
   if (finduserid) {
-    finduserid.pts+=xp;
+    finduserid.pts += xp;
     await finduserid.save();
   }
+}
+
+let str1 = "";
+let str2 = "";
+let count = 0;
+async function leaderboard_display(userid) {
+  const leaderpts = await User.findOne({ Id: userid });
+  const leadername = leaderpts.name;
+  let leaderxp = leaderpts.pts;
+  let leadersubstring = leaderxp.substring(9);
+  let s = 0;
+  for (let i = 0; i < leadersubstring.length; i++) {
+    let ch = leadersubstring.charAt(i);
+    if (ch === '0') {
+      str1 = str1 + leadersubstring.charAt(i);
+      count++;
+    }
+    else {
+      str2 = str2 + leadersubstring.charAt(i);
+    }
+  }
+  let num = parseInt(str2);
+ 
+  let len = str1.length;
+  console.log(num)
+  while (num != 0) {
+    let r = num % 10;
+    num = num / 10;
+    s = s + r;
+  }
+  const finall=Math.floor(s)-len+count*10;
+  return{finall,leadername}
 }
 
 let namess = "";
@@ -299,15 +331,17 @@ client.on('messageCreate', async (msg) => {
 
 
   if (msg.content === "/leaderboard") {
-    const leaderboard = new EmbedBuilder()
-      .setAuthor("Leaderboard")
-      .setColor("0x51267")
-      .addFields({ name: 'Top 5', value: "abhinab", inline: true },
-        {
-          name: 'Pts', value: "xp", inline: true
-        })
-    client.channels.cache.get("1237466068281458742").send("Ranking Table");
-    client.channels.cache.get("1237466068281458742").send({ embeds: [leaderboard] });
+    userid = msg.author.id;
+    const leaderBoard = await leaderboard_display(userid);
+    // const leaderboard = new EmbedBuilder()
+    //   .setAuthor("Leaderboard")
+    //   .setColor("0x51267")
+    //   .addFields({ name: 'Top 5', value: "abhinab", inline: true },
+    //     {
+    //       name: 'Pts', value: "xp", inline: true
+    //     })
+    // client.channels.cache.get("1237466068281458742").send("Ranking Table");
+    // client.channels.cache.get("1237466068281458742").send({ embeds: [leaderboard] });
   }
 })
 
