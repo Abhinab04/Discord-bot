@@ -189,7 +189,11 @@ let array = [];
 async function leaderboard_display() {
   const Display = await User.find({}).sort({ pts: -1 })
   for (let i = 0; i < Display.length; i++) {
-    array.push(Display[i].name, Display[i].pts)
+    const person = {
+      name: Display[i].name,
+       pts: Display[i].pts
+    }
+    array.push(person)
   }
   return array;
 }
@@ -330,21 +334,20 @@ client.on('messageCreate', async (msg) => {
     }
   }
 
+  let i=0;
 
-
-
+ 
   if (msg.content === "/leaderboard") {
     const leaderBoard = await leaderboard_display();
     const { Title, title_xp, Title_name } = await leaderTitle();
     const fields = leaderBoard.map(user => {
-      console.log(user)
-      return { name: user.display_name, value: `${user.display_pts} XP`, inline: true }
+      return { name: `${user.name}`, value: `${user.pts} XP` }
     })
-    // const LeaderBoard=new EmbedBuilder()
-    // .setColor("Yellow")
-    // .setTitle(underline(Title))
-    // .addFields(...fields)
-    // client.channels.cache.get("1237466068281458742").send({ embeds: [LeaderBoard] });
+    const LeaderBoard=new EmbedBuilder()
+    .setColor("Yellow")
+    .setTitle(underline(Title))
+    .addFields(...fields)
+    client.channels.cache.get("1237466068281458742").send({ embeds: [LeaderBoard] });
   }
 
 
