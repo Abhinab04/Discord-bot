@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 const app = express();
 const port = 3000;
 
-const { EmbedBuilder, Collection, ButtonBuilder, ActionRowBuilder, ButtonStyle, Component, Message } = require('discord.js');
+const { EmbedBuilder, Collection, ButtonBuilder, ActionRowBuilder, ButtonStyle, Component, Message, underline } = require('discord.js');
 
 const { Client, GatewayIntentBits } = require('discord.js');
 
@@ -130,7 +130,7 @@ async function adduser(username, Idss) {
   }
 }
 
-let xp = "";
+let xp = 0;
 
 
 async function submit(userid, con) {
@@ -180,41 +180,44 @@ async function submitdaily(userid) {
 async function addpts(userid, xp) {
   const finduserid = await User.findOne({ Id: userid })
   if (finduserid) {
-    finduserid.pts += xp;
+    finduserid.pts = xp;
     await finduserid.save();
   }
 }
 
-let str1 = "";
-let str2 = "";
-let count = 0;
-async function leaderboard_display(userid) {
-  const leaderpts = await User.findOne({ Id: userid });
-  const leadername = leaderpts.name;
-  let leaderxp = leaderpts.pts;
-  let leadersubstring = leaderxp.substring(9);
-  let s = 0;
-  for (let i = 0; i < leadersubstring.length; i++) {
-    let ch = leadersubstring.charAt(i);
-    if (ch === '0') {
-      str1 = str1 + leadersubstring.charAt(i);
-      count++;
-    }
-    else {
-      str2 = str2 + leadersubstring.charAt(i);
-    }
+let array = [];
+async function leaderboard_display() {
+  const Display = await User.find({}).sort({ pts: -1 })
+  for (let i = 0; i < Display.length; i++) {
+    array.push(Display[i].name, Display[i].pts)
   }
-  let num = parseInt(str2);
- 
-  let len = str1.length;
-  console.log(num)
-  while (num != 0) {
-    let r = num % 10;
-    num = num / 10;
-    s = s + r;
-  }
-  const finall=Math.floor(s)-len+count*10;
-  return{finall,leadername}
+  return array;
+}
+
+const Title = "Leaderboard"
+const Title_name = "Top5";
+const title_xp = "XP";
+async function leaderTitle() {
+  return { Title, title_xp, Title_name };
+}
+
+const commands = {
+  Commandsss: "Commands",
+  add_user_name: "Add User",
+  add_user: "/adduser username",
+  daily_Problem: "Daily Problem",
+  daily_question: "/daily",
+  Search_Question: "Search Question",
+  search_question: "/question search question-title-slug",
+  LearderName: "Leaderboard",
+  Leaderboard: "/leaderboard",
+  SubmitDaily: "Daily Problem Submit",
+  submit_daily_question: "/submit",
+  SubmitSearch: "Search Submit Question",
+  submit_search_question: "/submit search question-title-slug"
+};
+async function rules() {
+  return { commands }
 }
 
 let namess = "";
@@ -313,7 +316,6 @@ client.on('messageCreate', async (msg) => {
     if (search === 'search') {
       if (prog === con) {
         userid = msg.author.id;
-        console.log(userid)
         const { dailysearcheasysuccess, dailysearchmediumsuccess, dailysearchhardsuccess } = await submit(userid, con);
         if (dailysearcheasysuccess) {
           msg.reply("congratulations....point rewarded: 1xp ")
@@ -330,18 +332,39 @@ client.on('messageCreate', async (msg) => {
 
 
 
+
   if (msg.content === "/leaderboard") {
-    userid = msg.author.id;
-    const leaderBoard = await leaderboard_display(userid);
-    // const leaderboard = new EmbedBuilder()
-    //   .setAuthor("Leaderboard")
-    //   .setColor("0x51267")
-    //   .addFields({ name: 'Top 5', value: "abhinab", inline: true },
-    //     {
-    //       name: 'Pts', value: "xp", inline: true
-    //     })
-    // client.channels.cache.get("1237466068281458742").send("Ranking Table");
-    // client.channels.cache.get("1237466068281458742").send({ embeds: [leaderboard] });
+    const leaderBoard = await leaderboard_display();
+    const { Title, title_xp, Title_name } = await leaderTitle();
+    const fields = leaderBoard.map(user => {
+      console.log(user)
+      return { name: user.display_name, value: `${user.display_pts} XP`, inline: true }
+    })
+    // const LeaderBoard=new EmbedBuilder()
+    // .setColor("Yellow")
+    // .setTitle(underline(Title))
+    // .addFields(...fields)
+    // client.channels.cache.get("1237466068281458742").send({ embeds: [LeaderBoard] });
+  }
+
+
+  if (msg.content === '/Commands') {
+    const Commandss = await rules();
+    console.log(Commandss.commands.add_user)
+    const Rules = new EmbedBuilder()
+      .setColor('Yellow')
+      .setTitle(underline(Commandss.commands.Commandsss))
+      .addFields({ name: Commandss.commands.add_user_name, value: Commandss.commands.add_user },
+        { name: Commandss.commands.daily_Problem, value: Commandss.commands.daily_question }, {
+        name: Commandss.commands.Search_Question, value: Commandss.commands.search_question
+      }, {
+        name: Commandss.commands.LearderName, value: Commandss.commands.Leaderboard
+      }, {
+        name: Commandss.commands.SubmitDaily, value: Commandss.commands.submit_daily_question
+      }, {
+        name: Commandss.commands.SubmitSearch, value: Commandss.commands.submit_search_question
+      })
+    client.channels.cache.get("1237466068281458742").send({ embeds: [Rules] });
   }
 })
 

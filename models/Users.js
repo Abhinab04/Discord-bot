@@ -10,7 +10,7 @@ const UserSchema=new mongoose.Schema({
         required:true,
     },
     pts:{
-        type:String,
+        type:Number,
     }
 })
 
