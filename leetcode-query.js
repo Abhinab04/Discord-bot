@@ -188,7 +188,7 @@ async function addpts(userid, xp) {
 let array = [];
 async function leaderboard_display() {
   const Display = await User.find({}).sort({ pts: -1 })
-  for (let i = 0; i < Display.length; i++) {
+  for (let i = 0; i <Display.length; i++) {
     const person = {
       name: Display[i].name,
        pts: Display[i].pts
@@ -341,7 +341,9 @@ client.on('messageCreate', async (msg) => {
     const leaderBoard = await leaderboard_display();
     const { Title, title_xp, Title_name } = await leaderTitle();
     const fields = leaderBoard.map(user => {
-      return { name: `${user.name}`, value: `${user.pts} XP` }
+      return [{ name:"Top 5", value: `${i+1})${user.name}`,inline:true },
+        {name: `${title_xp}`, value: `${user.pts} XP`,inline:true}
+      ]
     })
     const LeaderBoard=new EmbedBuilder()
     .setColor("Yellow")
