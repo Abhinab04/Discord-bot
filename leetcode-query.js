@@ -248,9 +248,9 @@ client.on('messageCreate', async (msg) => {
         .setStyle(ButtonStyle.Primary)
       const row = new ActionRowBuilder()
         .addComponents(confirms);
-      client.channels.cache.get("1237466068281458742").send("here is today's daily problem :-");
-      client.channels.cache.get("1237466068281458742").send({ embeds: [coloring] });
-      client.channels.cache.get("1237466068281458742").send({ components: [row] });
+      client.channels.cache.get(process.env.CHANNEL_ID).send("here is today's daily problem :-");
+      client.channels.cache.get(process.env.CHANNEL_ID).send({ embeds: [coloring] });
+      client.channels.cache.get(process.env.CHANNEL_ID).send({ components: [row] });
     }
   }
 
@@ -280,9 +280,9 @@ client.on('messageCreate', async (msg) => {
           const row = new ActionRowBuilder()
             .addComponents(confirm);
 
-          client.channels.cache.get("1237466068281458742").send("Your searched question");
-          client.channels.cache.get("1237466068281458742").send({ embeds: [coloring] });
-          client.channels.cache.get("1237466068281458742").send({ components: [row] });
+          client.channels.cache.get(process.env.CHANNEL_ID).send("Your searched question");
+          client.channels.cache.get(process.env.CHANNEL_ID).send({ embeds: [coloring] });
+          client.channels.cache.get(process.env.CHANNEL_ID).send({ components: [row] });
         }
       }
     }
@@ -349,7 +349,7 @@ client.on('messageCreate', async (msg) => {
     .setColor("Yellow")
     .setTitle(underline(Title))
     .addFields(...fields)
-    client.channels.cache.get("1237466068281458742").send({ embeds: [LeaderBoard] });
+    client.channels.cache.get(process.env.CHANNEL_ID).send({ embeds: [LeaderBoard] });
   }
 
 
@@ -369,7 +369,7 @@ client.on('messageCreate', async (msg) => {
       }, {
         name: Commandss.commands.SubmitSearch, value: Commandss.commands.submit_search_question
       })
-    client.channels.cache.get("1237466068281458742").send({ embeds: [Rules] });
+    client.channels.cache.get(process.env.CHANNEL_ID).send({ embeds: [Rules] });
   }
 })
 
