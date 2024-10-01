@@ -22,7 +22,7 @@ const client = new Client({
 const User = require("./models/Users")
 
 //mongodb connection string
-const db = require('./config/key').MongoURI;
+const db = process.env.MONGO_URI;
 
 //mongodb connection
 mongoose.connect(db, { useNewUrlParser: true })
